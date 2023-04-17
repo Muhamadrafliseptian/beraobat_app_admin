@@ -170,23 +170,13 @@ export default {
         getAdmin() {
             const params = [].join("&")
             this.$store.dispatch("getData", ["akun/profil/admin/profil", params]).then((result) => {
-                this.user.id = result.data.id
-                this.user.nama = result.data.nama
-                this.user.email = result.data.email
-                this.user.nomor_hp = result.data.nomorHp
-                this.user.tanggal_lahir = result.data.tanggalLahir
-                this.user.tempat_lahir = result.data.tempatLahir
-                this.user.alamat = result.data.alamat
-                this.user.tinggi_badan = result.data.tinggiBadan
-                this.user.jenis_kelamin = result.data.jenisKelamin
-                this.user.berat_badan = result.data.beratBadan
+                this.user = this.result.data
                 console.log(result);
             }).catch((error) => {
                 console.log(error);
             })
         },
         editAdmin() {
-            console.log("test");
             let type = "updateData"
             const self = this
             const data = {

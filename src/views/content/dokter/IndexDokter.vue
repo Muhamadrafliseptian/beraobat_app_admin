@@ -7,7 +7,6 @@
         </div>
         <div class="col-6 text-end">
             <ButtonAction class="btn-primary " @click="$router.push('/dokter/create')" message="Tambah Data +" />
-
         </div>
     </div>
     <div class="col-lg-12 grid-margin stretch-card">
@@ -78,6 +77,7 @@
 import ButtonAction from '@/components/ButtonAction.vue';
 import LoadingComponent from '@/components/LoadingComponent.vue';
 import iziToast from 'izitoast';
+
 export default {
     data() {
         return {
@@ -90,8 +90,6 @@ export default {
     },
     created() {
         this.getDokter()
-    },
-    computed: {
     },
     methods: {
         getDokter() {
@@ -108,7 +106,7 @@ export default {
                     selfGet.isLoading = false
                     selfGet.fullPage = false
                     selfGet.dokters = result.data
-                }, 1000);
+                }, 100);
             }).catch((err) => {
                 console.log(err);
                 selfGet.isLoading = false

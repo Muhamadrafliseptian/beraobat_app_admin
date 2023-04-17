@@ -6,10 +6,10 @@
                 <Form @submit="handleSubmit" :validation-schema="schema" v-slot="{ errors }"
                     class="p-4 p-md-5 border rounded-3 bg-light">
                     <div class="form-floating mb-3">
-                        <Field name="name" type="text" class="form-control" v-model="users.nomor_hp" id="floatingField"
+                        <Field name="nomorHp" type="text" class="form-control" v-model="users.nomor_hp" id="floatingField"
                             placeholder="name@example.com" />
                         <label for="floatingField">Nomor hp</label>
-                        <span class="text-danger">{{ errors.name }}</span>
+                        <span class="text-danger">{{ errors.nomorHp }}</span>
                     </div>
                     <div class="form-group">
 
@@ -53,17 +53,11 @@
 <script>
 import iziToast from 'izitoast'
 import Cookies from "js-cookie";
-import * as yup from 'yup'
+import * as validate from 'yup'
 import { Field, Form } from 'vee-validate'
-// import iziToast from "izitoast"
 export default {
     data() {
-        const schema = yup.object({
-            name: yup.string().required('nomor hp wajib diisi').max(13, 'nomor hp maksimal 13 angka').min(12, 'nomor hp minimal 12 angka'),
-            password: yup.string().min(8, 'password minimal 8 karakter').max(20, 'password maksimal 20 karakter').required('😋 password wajib diisi')
-        })
         return {
-            schema,
             users: {
                 nomor_hp: '',
                 password: '',
@@ -77,36 +71,40 @@ export default {
         Field,
         Form,
     },
-    computed: {},
+    computed: {
+        schema() {
+            return validate.object({
+                nomorHp: validate.string().required(),
+                password: validate.string().required()
+            })
+        }
+    },
     methods: {
         hidePassword() {
             this.showPassword = !this.showPassword
         },
         handleSubmit() {
-            this.isLoading = true
-            this.$store.dispatch("postData", ["autentikasi/login", this.users]).then((response) => {
-                Cookies.set("token", response.token);
-                Cookies.set("user", JSON.stringify(response));
-                setTimeout(() => {
-                    iziToast.success({
-                        transitionIn: 'fadeInUp',
-                        timeout: 2000,
-                        title: "Berhasil",
-                        message: "Berhasil Login",
-                        position: "topCenter",
-                    }).then(function () {
-                        window.location = "/"
-                    })
-                }, 2000);
+            let type = "postData"
+            const data = {
+                nomor_hp: this.users.nomor_hp,
+                password: this.users.password
+            }
+            let url = [
+                "autentikasi/login", data
+            ]
+            this.$store.dispatch(type, url).then((result) => {
+                Cookies.set("token", result.data.token)
+                Cookies.set("user", JSON.stringify(result));
+                iziToast.success({
+                    transitionIn: 'fadeInUp',
+                    timeout: 2000,
+                    title: 'berhasil',
+                    message: "login",
+                    position: 'topCenter'
+                })
+                window.location = '/'
             }).catch((err) => {
                 console.log(err);
-                this.isLoading = false
-                this.$swal({
-                    text: "Periksa Kembali Form Isian Anda",
-                    icon: "error"
-                }).then(function () {
-                    window.location = "/login"
-                })
             })
         },
     },

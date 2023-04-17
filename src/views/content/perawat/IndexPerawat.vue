@@ -29,6 +29,9 @@
                                 <th>
                                     Nomor Telepon
                                 </th>
+                                <th>
+                                    Status
+                                </th>
                                 <th class="text-center">
                                     Aksi
                                 </th>
@@ -40,14 +43,20 @@
                                     <img :src="'./assets/images/faces/face1.jpg'" alt="image" />
                                 </td>
                                 <td>
-                                    {{ perawat.nama }}
+                                    {{ perawat.getUser.nama }}
                                 </td>
                                 <td>
-                                    {{ perawat.alamat }}
+                                    {{ perawat.getUser.alamat }}
                                 </td>
                                 <td>
-                                    {{ perawat.alamat }}
+                                    {{ perawat.getUser.nomorHp }}
                                 </td>
+                            <td>
+                                <label class="switch">
+                                    <input type="checkbox" :checked="perawat.getUser.status == 1">
+                                    <span class="slider round" @click="updateStatus(perawat.getUser.id)"></span>
+                                </label>
+                            </td>
                                 <td class="text-center">
                                     <router-link to=""
                                         class="btn btn-danger btn-sm me-2 text-white">Delete</router-link>
@@ -56,7 +65,6 @@
                             </tr>
                         </tbody>
                     </table>
-                    <EmptyData v-if="isEmpty" class="text-center"/>
                 </div>
             </div>
         </div>
@@ -64,45 +72,119 @@
 </template>
 
 <script>
-import EmptyData from '@/components/EmptyData.vue';
 import LoadingComponent from '@/components/LoadingComponent.vue';
 export default {
     data() {
         return {
             perawats: [],
             isLoading: false,
-            isEmpty: false
+            isEmpty: false,
+            status: 0
         }
     },
     created() {
         this.getPerawat()
     },
     methods: {
-        async getPerawat() {
+        getPerawat() {
             this.isLoading = true
             this.isEmpty = true
             const params = [].join("&")
             this.$store.dispatch("getData", ["akun/perawat", params]).then((result) => {
+                this.perawats = result.data
                 console.log(result.data);
                 setTimeout(() => {
                     this.isLoading = false
                     this.isEmpty = false
-                    this.perawats = result.data
                 }, 1000);
             }).catch((err) => {
                 console.log(err);
                 this.isEmpty = false
                 this.isLoading = false
             });
-        }
+        },
+        updateStatus(id_user) {
+            console.log('error');
+                const selfEdit = this
+                var type = "updateData";
+                var url = [
+                    "akun/active_account", id_user, {
+                    }
+                ]
+                selfEdit.isLoading = true;
+                selfEdit.$store.dispatch(type, url).then((response) => {
+                    console.log(response);
+                    selfEdit.isLoading = false;
+                })
+            },
     },
     components: {
         LoadingComponent,
-        EmptyData
     }
 }
 </script>
 
-<style lang="scss" scoped>
+<style>
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 26px;
+}
 
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
 </style>

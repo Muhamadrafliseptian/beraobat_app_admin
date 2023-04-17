@@ -54,8 +54,8 @@
                                 </td>
                                 <td>
                                     <label class="switch">
-                                        <input type="checkbox">
-                                        <span class="slider round"></span>
+                                        <input type="checkbox" :checked="apotek.getUser.status == 1">
+                                        <span class="slider round" @click="updateStatus(apotek.getUser.id)"></span>
                                     </label>
                                 </td>
                                 <td class="text-center">
